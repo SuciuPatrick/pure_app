@@ -4,6 +4,7 @@ from rest_framework import viewsets
 from rest_framework.filters import BaseFilterBackend
 from .models import Schedule, Subject
 from .serializers import ScheduleSerializer
+from .utils import StandardResultsSetPagination
 
 
 class TodayClassFilterBackend(BaseFilterBackend):
@@ -25,6 +26,7 @@ class TodayClassFilterBackend(BaseFilterBackend):
 class ScheduleViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ScheduleSerializer
     filter_backends = [TodayClassFilterBackend]
+    pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
         return Schedule.objects.select_related(
