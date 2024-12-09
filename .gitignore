@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual Environment
+venv/
+
+# Environment variables
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Django
+staticfiles/
+
+# Docker
+docker-compose.override.yml
+
+# macOS
+.DS_Store 
