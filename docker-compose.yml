@@ -1,6 +1,19 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:15
+    env_file: .env.development
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
@@ -8,29 +21,12 @@ services:
       - .:/app
     ports:
       - "8000:8000"
+    env_file: .env.development
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/school_schedule
-      - REDIS_URL=redis://redis:6379/1
+      - DJANGO_SETTINGS_MODULE=school_schedule.settings
     depends_on:
       - db
       - redis
-
-  db:
-    image: postgres:15
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=school_schedule
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    command: redis-server --appendonly yes  # Enable persistence
 
 volumes:
   postgres_data:

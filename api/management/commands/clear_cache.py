@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from schedule.cache import invalidate_schedule_cache
+from api.cache import invalidate_schedule_cache
 
 
 class Command(BaseCommand):

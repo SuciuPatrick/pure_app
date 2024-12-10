@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db.models import signals
 from django.dispatch import receiver
-from .cache import invalidate_schedule_cache
+from api.cache import invalidate_schedule_cache
 
 
 class Class(models.Model):

@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from schedule.models import Student, Class, Teacher, Subject, Schedule
+from api.models import Student, Class, Teacher, Subject, Schedule
 
 
 class Command(BaseCommand):

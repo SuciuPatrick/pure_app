@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  db_test:
+    image: postgres:15
+    env_file: .env.test
+    ports:
+      - "5433:5432"
+
+  redis_test:
+    image: redis:7
+    ports:
+      - "6380:6379"
+
+  web_test:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["/app/scripts/test-entrypoint.sh"]
+    volumes:
+      - .:/app
+    env_file: .env.test
+    environment:
+      - DJANGO_SETTINGS_MODULE=school_schedule.settings
+    depends_on:
+      - db_test
+      - redis_test

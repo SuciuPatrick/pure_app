@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'django_extensions',
-    'schedule',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -176,7 +176,12 @@ LOGGING = {
         },
     },
     'loggers': {
-        'schedule.cache': {  # Logger for our cache module
+        'api.cache': {  # Logger for our cache module
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django.db.backends': {  # Database queries
             'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,

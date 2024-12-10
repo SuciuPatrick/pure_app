@@ -11,5 +11,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 RUN adduser --disabled-password --no-create-home django
-
-USER django 
+USER django
