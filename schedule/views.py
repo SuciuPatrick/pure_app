@@ -7,6 +7,7 @@ from .serializers import ScheduleSerializer
 from .utils import StandardResultsSetPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import ScheduleFilter
+from .cache import cache_schedule_view
 
 
 class ScheduleViewSet(viewsets.ModelViewSet):
@@ -21,3 +22,7 @@ class ScheduleViewSet(viewsets.ModelViewSet):
             'subject',
             'subject__teacher'
         ).order_by('day_of_week', 'hour')
+
+    @cache_schedule_view(timeout=60 * 15)  # Cache for 15 minutes
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)

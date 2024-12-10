@@ -10,8 +10,10 @@ services:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/school_schedule
+      - REDIS_URL=redis://redis:6379/1
     depends_on:
       - db
+      - redis
 
   db:
     image: postgres:15
@@ -22,15 +24,14 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
 
-  # test:
-  #   build: .
-  #   command: pytest
-  #   volumes:
-  #     - .:/app
-  #   environment:
-  #     - DATABASE_URL=postgresql://postgres:postgres@db:5432/school_schedule_test
-  #   depends_on:
-  #     - db
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes  # Enable persistence
 
 volumes:
-  postgres_data: 
+  postgres_data:
+  redis_data: 

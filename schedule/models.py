@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db.models import signals
 from django.dispatch import receiver
+from .cache import invalidate_schedule_cache
 
 
 class Class(models.Model):
@@ -63,6 +64,7 @@ class Schedule(models.Model):
         return f"{self.class_group} - {self.subject} ({self.get_day_of_week_display()}, hour {self.hour})"
 
 
+# Student count signals
 @receiver(signals.post_save, sender=Student)
 def update_class_student_count_on_save(sender, instance, **kwargs):
     if instance.class_group:
@@ -88,3 +90,13 @@ def update_old_class_student_count(sender, instance, **kwargs):
                 old_student.class_group.save(update_fields=['student_count'])
         except Student.DoesNotExist:
             pass
+
+
+# Cache invalidation signals
+@receiver([signals.post_save, signals.post_delete], sender=Schedule)
+@receiver([signals.post_save, signals.post_delete], sender=Subject)
+@receiver([signals.post_save, signals.post_delete], sender=Teacher)
+@receiver([signals.post_save, signals.post_delete], sender=Class)
+def invalidate_cache_on_change(sender, **kwargs):
+    """Invalidate cache when any related model changes"""
+    invalidate_schedule_cache()
