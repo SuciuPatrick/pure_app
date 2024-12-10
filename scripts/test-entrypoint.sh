@@ -2,4 +2,4 @@
 set -e
 
 echo "Running tests..."
-pytest -v --no-migrations "$@"
+pytest -s -v --no-migrations

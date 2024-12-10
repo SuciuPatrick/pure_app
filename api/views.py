@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.db.models import Prefetch
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from rest_framework.filters import BaseFilterBackend
 from .models import Schedule, Subject
 from .serializers import ScheduleSerializer
@@ -10,7 +10,10 @@ from .filters import ScheduleFilter
 from .cache import cache_schedule_view
 
 
-class ScheduleViewSet(viewsets.ModelViewSet):
+class ScheduleViewSet(
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     serializer_class = ScheduleSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = ScheduleFilter

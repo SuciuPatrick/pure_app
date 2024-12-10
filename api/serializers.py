@@ -22,7 +22,7 @@ class ClassSerializer(serializers.ModelSerializer):
 
 
 class ScheduleSerializer(serializers.ModelSerializer):
-    class_group = ClassSerializer()
+    class_group = ClassSerializer() # avoid naming this "class"?
     subject = SubjectSerializer()
     teacher = TeacherSerializer(source='subject.teacher')
     day_of_week = serializers.CharField(source='get_day_of_week_display')

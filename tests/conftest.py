@@ -1,10 +1,16 @@
 import pytest
 from rest_framework.test import APIClient
+import logging
+
+
+# Disable logging for tests
+@pytest.fixture(autouse=True)
+def disable_logging():
+    logging.disable(logging.CRITICAL)
+    yield
+    logging.disable(logging.NOTSET)
+
 
 @pytest.fixture
 def api_client():
     return APIClient()
-
-@pytest.fixture
-def test_password():
-    return 'test_password'

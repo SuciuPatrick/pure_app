@@ -43,5 +43,4 @@ def cache_schedule_view(timeout=None):
 
 def invalidate_schedule_cache():
     """Clear all schedule-related cache entries"""
-    logger.info("Invalidating all schedule cache entries")
     cache.delete_pattern("schedule:view:*")
