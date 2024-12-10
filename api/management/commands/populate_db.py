@@ -1,6 +1,7 @@
 import random
 
 from django.core.management.base import BaseCommand
+from django.db import IntegrityError
 from faker import Faker
 
 from api.models import (
@@ -68,14 +69,17 @@ class Command(BaseCommand):
 
         for class_obj in classes:
             for day in range(1, 6):  # Monday to Friday
-                for hour in range(1, 8):  # 7 hours per day
-                    Schedule.objects.create(
-                        class_group=class_obj,
-                        subject=random.choice(subjects),
-                        day_of_week=day,
-                        hour=hour,
-                    )
-                    schedules_created += 1
+                for hour in range(1, 8):
+                    try:  # 7 hours per day
+                        Schedule.objects.create(
+                            class_group=class_obj,
+                            subject=random.choice(subjects),
+                            day_of_week=day,
+                            hour=hour,
+                        )
+                        schedules_created += 1
+                    except IntegrityError:
+                        continue
 
         return schedules_created
 
