@@ -15,7 +15,6 @@ class SubjectSerializer(serializers.ModelSerializer):
 
 
 class ClassSerializer(serializers.ModelSerializer):
-    student_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Class

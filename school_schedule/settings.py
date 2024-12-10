@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_filters',
+    'django_extensions',
     'schedule',
 ]
 
@@ -49,6 +50,27 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
+if os.environ.get('QUERYCOUNT', 1):
+    MIDDLEWARE.append(
+        'querycount.middleware.QueryCountMiddleware',
+    )
+
+QUERYCOUNT = {
+    'THRESHOLDS': {
+        'MEDIUM': 50,
+        'HIGH': 200,
+        'MIN_TIME_TO_LOG': 0,
+        'MIN_QUERY_COUNT_TO_LOG': 0
+    },
+    'IGNORE_REQUEST_PATTERNS': [],
+    'IGNORE_SQL_PATTERNS': [],
+    'DISPLAY_DUPLICATES': True,
+    'RESPONSE_HEADER': 'X-DjangoQueryCount-Count',
+    'DISPLAY_READABLE_TIMES': True,
+} 
+
 
 ROOT_URLCONF = 'school_schedule.urls'
 

@@ -1,16 +1,15 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db.models import signals
+from django.dispatch import receiver
 
 
 class Class(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    student_count = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
-
-    @property
-    def student_count(self):
-        return self.students.count()
 
     class Meta:
         verbose_name_plural = 'classes'
@@ -62,3 +61,30 @@ class Schedule(models.Model):
 
     def __str__(self):
         return f"{self.class_group} - {self.subject} ({self.get_day_of_week_display()}, hour {self.hour})"
+
+
+@receiver(signals.post_save, sender=Student)
+def update_class_student_count_on_save(sender, instance, **kwargs):
+    if instance.class_group:
+        instance.class_group.student_count = instance.class_group.students.count()
+        instance.class_group.save(update_fields=['student_count'])
+
+
+@receiver(signals.post_delete, sender=Student)
+def update_class_student_count_on_delete(sender, instance, **kwargs):
+    if instance.class_group:
+        instance.class_group.student_count = instance.class_group.students.count()
+        instance.class_group.save(update_fields=['student_count'])
+
+
+@receiver(signals.pre_save, sender=Student)
+def update_old_class_student_count(sender, instance, **kwargs):
+    if instance.pk:  # Only for existing students
+        try:
+            old_student = Student.objects.get(pk=instance.pk)
+            if old_student.class_group and old_student.class_group != instance.class_group:
+                # Update the old class count
+                old_student.class_group.student_count = old_student.class_group.students.count() - 1
+                old_student.class_group.save(update_fields=['student_count'])
+        except Student.DoesNotExist:
+            pass
