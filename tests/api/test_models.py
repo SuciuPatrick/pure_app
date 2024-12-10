@@ -1,6 +1,13 @@
 import pytest
-from api.models import Student, Class
-from tests.factories import StudentFactory, ClassFactory
+
+from api.models import (
+    Class,
+    Student,
+)
+from tests.factories import (
+    ClassFactory,
+    StudentFactory,
+)
 
 
 @pytest.mark.django_db
@@ -12,7 +19,7 @@ class TestStudentCountSignals:
 
     def test_student_creation_updates_count(self):
         """Test that creating a student increases the class student count"""
-        student = StudentFactory(class_group=self.class_a)
+        StudentFactory(class_group=self.class_a)
         self.class_a.refresh_from_db()
         assert self.class_a.student_count == 1
 
@@ -43,6 +50,6 @@ class TestStudentCountSignals:
 
     def test_multiple_students_count(self):
         """Test that multiple students in the same class are counted correctly"""
-        students = [StudentFactory(class_group=self.class_a) for _ in range(3)]
+        _ = [StudentFactory(class_group=self.class_a) for _ in range(3)]
         self.class_a.refresh_from_db()
         assert self.class_a.student_count == 3

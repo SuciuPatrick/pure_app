@@ -80,4 +80,4 @@ Example response:
 - The schedule is the same for every week
 - Each lesson lasts one hour
 - The application uses PostgreSQL for better performance and scalability
-- Tests are run using pytest with the --nomigrations flag for faster execution 
+- Tests are run using pytest with the --nomigrations flag for faster execution

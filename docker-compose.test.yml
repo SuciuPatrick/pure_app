@@ -13,7 +13,7 @@ services:
       - "6380:6379"
 
   web_test:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     entrypoint: ["/app/scripts/test-entrypoint.sh"]

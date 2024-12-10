@@ -1,12 +1,21 @@
-from django.core.management.base import BaseCommand
-from api.models import Student, Class, Teacher, Subject, Schedule
-from faker import Faker
 import random
+
+from django.core.management.base import BaseCommand
+from faker import Faker
+
+from api.models import (
+    Class,
+    Schedule,
+    Student,
+    Subject,
+    Teacher,
+)
 
 fake = Faker()
 
+
 class Command(BaseCommand):
-    help = 'Populates the database with sample data'
+    help = "Populates the database with sample data"
 
     def create_classes(self, class_names):
         """Create classes"""
@@ -25,8 +34,7 @@ class Command(BaseCommand):
         for class_obj in classes:
             for _ in range(students_per_class):
                 student = Student.objects.create(
-                    name=fake.name(),
-                    class_group=class_obj
+                    name=fake.name(), class_group=class_obj
                 )
                 students.append(student)
         return students
@@ -34,7 +42,7 @@ class Command(BaseCommand):
     def create_teachers(self, count=15):
         """Create teachers with titles and fake names"""
         teachers = []
-        teacher_titles = ['Mr.', 'Ms.', 'Mrs.', 'Dr.']
+        teacher_titles = ["Mr.", "Ms.", "Mrs.", "Dr."]
         for _ in range(count):
             title = random.choice(teacher_titles)
             name = f"{title} {fake.last_name()}"
@@ -49,8 +57,7 @@ class Command(BaseCommand):
             # Create 1 or 2 teachers per subject
             for _ in range(random.randint(1, 2)):
                 subject = Subject.objects.create(
-                    name=subject_name,
-                    teacher=random.choice(teachers)
+                    name=subject_name, teacher=random.choice(teachers)
                 )
                 subjects.append(subject)
         return subjects
@@ -58,53 +65,63 @@ class Command(BaseCommand):
     def create_schedules(self, classes, subjects):
         """Create weekly schedules for all classes"""
         schedules_created = 0
-        
+
         for class_obj in classes:
             for day in range(1, 6):  # Monday to Friday
                 for hour in range(1, 8):  # 7 hours per day
-                    try:
-                        Schedule.objects.create(
-                            class_group=class_obj,
-                            subject=random.choice(subjects),
-                            day_of_week=day,
-                            hour=hour
-                        )
-                        schedules_created += 1
-                    except:
-                        # Skip if there's a scheduling conflict
-                        continue
-        
+                    Schedule.objects.create(
+                        class_group=class_obj,
+                        subject=random.choice(subjects),
+                        day_of_week=day,
+                        hour=hour,
+                    )
+                    schedules_created += 1
+
         return schedules_created
 
     def handle(self, *args, **kwargs):
-        self.stdout.write('Creating sample data...')
+        self.stdout.write("Creating sample data...")
 
         # Configuration
-        class_names = ['5A', '5B', '5C', '5D', '6A', '6B', '6C', '6D']
+        class_names = ["5A", "5B", "5C", "5D", "6A", "6B", "6C", "6D"]
         subject_names = [
-            'Mathematics', 'English Literature', 'Physics', 'Chemistry',
-            'Biology', 'History', 'Geography', 'Art', 'Music', 'Physical Education'
+            "Mathematics",
+            "English Literature",
+            "Physics",
+            "Chemistry",
+            "Biology",
+            "History",
+            "Geography",
+            "Art",
+            "Music",
+            "Physical Education",
         ]
 
         # Create all data
         classes = self.create_classes(class_names)
-        self.stdout.write(self.style.SUCCESS(f'Created {len(classes)} classes'))
+        self.stdout.write(self.style.SUCCESS(f"Created {len(classes)} classes"))
 
         students = self.create_students(classes)
-        self.stdout.write(self.style.SUCCESS(f'Created {len(students)} students'))
+        self.stdout.write(self.style.SUCCESS(f"Created {len(students)} students"))
 
         teachers = self.create_teachers()
-        self.stdout.write(self.style.SUCCESS(f'Created {len(teachers)} teachers'))
+        self.stdout.write(self.style.SUCCESS(f"Created {len(teachers)} teachers"))
 
         subjects = self.create_subjects(subject_names, teachers)
-        self.stdout.write(self.style.SUCCESS(f'Created {len(subjects)} subject-teacher combinations'))
+        self.stdout.write(
+            self.style.SUCCESS(f"Created {len(subjects)} subject-teacher combinations")
+        )
 
         schedules = self.create_schedules(classes, subjects)
-        self.stdout.write(self.style.SUCCESS(f'Created {schedules} schedule entries'))
+        self.stdout.write(self.style.SUCCESS(f"Created {schedules} schedule entries"))
 
         # Print statistics
-        self.stdout.write('\nDatabase Statistics:')
-        self.stdout.write(f'Average class size: {Student.objects.count() / Class.objects.count():.1f} students')
-        self.stdout.write(f'Subjects per teacher: {Subject.objects.count() / Teacher.objects.count():.1f}')
-        
-        self.stdout.write(self.style.SUCCESS('\nDatabase populated successfully!')) 
+        self.stdout.write("\nDatabase Statistics:")
+        self.stdout.write(
+            f"Average class size: {Student.objects.count() / Class.objects.count():.1f} students"
+        )
+        self.stdout.write(
+            f"Subjects per teacher: {Subject.objects.count() / Teacher.objects.count():.1f}"
+        )
+
+        self.stdout.write(self.style.SUCCESS("\nDatabase populated successfully!"))
